@@ -5,7 +5,7 @@ def load_advent_dat(data):
     from .data import parse
 
     datapath = os.path.join(os.path.dirname(__file__), 'advent.dat')
-    with open(datapath, 'r', encoding='ascii') as datafile:
+    with open(datapath, 'r') as datafile:
         parse(data, datafile)
 
 def play(seed=None):
