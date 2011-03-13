@@ -1,4 +1,4 @@
-"""Parse the original PDP ``advent.dat`` file."""
+u"""Parse the original PDP ``advent.dat`` file."""
 
 from operator import attrgetter
 from .model import Hint, Message, Move, Object, Room, Word
@@ -6,7 +6,7 @@ from .model import Hint, Message, Move, Object, Room, Word
 # The Adventure data file knows only the first five characters of each
 # word in the game, so we have to know the full verion of each word.
 
-long_words = { w[:5]: w for w in """upstream downstream forest
+long_words = dict(( w[:5], w) for w in u"""upstream downstream forest
 forward continue onward return retreat valley staircase outside building stream
 cobble inward inside surface nowhere passage tunnel canyon awkward
 upward ascend downward descend outdoors barren across debris broken
@@ -19,7 +19,7 @@ trident shards pottery emerald platinum pyramid pearl persian spices capture
 release discard mumble unlock nothing extinguish placate travel proceed
 continue explore follow attack strike devour inventory detonate ignite
 blowup peruse shatter disturb suspend sesame opensesame abracadabra
-shazam excavate information""".split() }
+shazam excavate information""".split())
 
 class Data(object):
     def __init__(self):
@@ -32,7 +32,7 @@ class Data(object):
         self.magic_messages = {}
 
     def referent(self, word):
-        if word.kind == 'noun':
+        if word.kind == u'noun':
             return self.objects[word.n % 1000]
 
 # Helper functions.
@@ -45,24 +45,24 @@ def make_object(dictionary, klass, n):
 
 def expand_tabs(segments):
     it = iter(segments)
-    line = next(it)
+    line = it.next()
     for segment in it:
         spaces = 8 - len(line) % 8
-        line += ' ' * spaces + segment
+        line += u' ' * spaces + segment
     return line
 
 def accumulate_message(dictionary, n, line):
-    dictionary[n] = dictionary.get(n, '') + line + '\n'
+    dictionary[n] = dictionary.get(n, u'') + line + u'\n'
 
 # Knowledge of what each section contains.
 
 def section1(data, n, *etc):
     room = make_object(data.rooms, Room, n)
-    if not etc[0].startswith('>$<'):
-        room.long_description += expand_tabs(etc) + '\n'
+    if not etc[0].startswith(u'>$<'):
+        room.long_description += expand_tabs(etc) + u'\n'
 
 def section2(data, n, line):
-    make_object(data.rooms, Room, n).short_description += line + '\n'
+    make_object(data.rooms, Room, n).short_description += line + u'\n'
 
 def section3(data, x, y, *verbs):
     last_travel = data._last_travel
@@ -77,15 +77,15 @@ def section3(data, x, y, *verbs):
     if m == 0:
         condition = (None,)
     elif 0 < m < 100:
-        condition = ('%', m)
+        condition = (u'%', m)
     elif m == 100:
-        condition = ('not_dwarf',)
+        condition = (u'not_dwarf',)
     elif 100 < m <= 200:
-        condition = ('carrying', mm)
+        condition = (u'carrying', mm)
     elif 200 < m <= 300:
-        condition = ('carrying_or_in_room_with', mm)
+        condition = (u'carrying_or_in_room_with', mm)
     elif 300 < m:
-        condition = ('prop!=', mm, mh - 3)
+        condition = (u'prop!=', mm, mh - 3)
 
     if n <= 300:
         action = make_object(data.rooms, Room, n)
@@ -116,8 +116,8 @@ def section4(data, n, text, *etc):
         word.n = n
         word.text = text
         original.add_synonym(word)
-    word.kind = ['travel', 'noun', 'verb', 'snappy_comeback'][n // 1000]
-    if word.kind == 'noun':
+    word.kind = [u'travel', u'noun', u'verb', u'snappy_comeback'][n // 1000]
+    if word.kind == u'noun':
         n %= 1000
         obj = make_object(data.objects, Object, n)
         obj.names.append(text)
@@ -133,15 +133,15 @@ def section5(data, n, *etc):
     else:
         n /= 100
         messages = data._object.messages
-        if etc[0].startswith('>$<'):
-            more = ''
+        if etc[0].startswith(u'>$<'):
+            more = u''
         else:
-            more = expand_tabs(etc) + '\n'
-        messages[n] = messages.get(n, '') + more
+            more = expand_tabs(etc) + u'\n'
+        messages[n] = messages.get(n, u'') + more
 
 def section6(data, n, *etc):
     message = make_object(data.messages, Message, n)
-    message.text += expand_tabs(etc) + '\n'
+    message.text += expand_tabs(etc) + u'\n'
 
 def section7(data, n, room_n, *etc):
     if not room_n:
@@ -196,17 +196,17 @@ def section12(data, n, line):
 # Process every section of the file in turn.
 
 def parse(data, datafile):
-    """Read the Adventure data file and return a ``Data`` object."""
+    u"""Read the Adventure data file and return a ``Data`` object."""
     data._last_travel = [0, [0]]  # x and verbs used by section 3
 
     while True:
         section_number = int(datafile.readline())
         if not section_number:  # no further sections
             break
-        store = globals().get('section%d' % section_number)
+        store = globals().get(u'section%d' % section_number)
         while True:
-            fields = [ (int(field) if field.lstrip('-').isdigit() else field)
-                       for field in datafile.readline().strip().split('\t') ]
+            fields = [ (int(field) if field.lstrip(u'-').isdigit() else field)
+                       for field in datafile.readline().strip().split(u'\t') ]
             if fields[0] == -1:  # end-of-section marker
                 break
             store(data, *fields)
@@ -214,12 +214,12 @@ def parse(data, datafile):
     del data._last_travel  # state used by section 3
     del data._object       # state used by section 5
 
-    data.object_list = sorted(set(data.objects.values()), key=attrgetter('n'))
+    data.object_list = sorted(set(data.objects.values()), key=attrgetter(u'n'))
     #data.room_list = sorted(set(data.rooms.values()), key=attrgetter('n'))
     for obj in data.object_list:
         name = obj.names[0]
         if hasattr(data, name):
-            name = name + '2'  # create identifiers like ROD2, PLANT2
+            name = name + u'2'  # create identifiers like ROD2, PLANT2
         setattr(data, name, obj)
 
     return data

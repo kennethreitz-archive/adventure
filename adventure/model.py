@@ -1,7 +1,7 @@
-"""Classes representing Adventure game components."""
+u"""Classes representing Adventure game components."""
 
 class Move(object):
-    """An entry in the travel table."""
+    u"""An entry in the travel table."""
 
     is_forced = False
     verbs = []
@@ -13,33 +13,33 @@ class Move(object):
 
         c = self.condition[0]
         if c is None:
-            condition = ''
-        elif c == '%':
-            condition = ' %d%% of the time' % self.condition[1]
-        elif c == 'not_dwarf':
-            condition = ' if not a dwarf'
-        elif c == 'carrying':
-            condition = ' if carrying %s' % self.condition[1]
-        elif c == 'carrying_or_in_room_with':
-            condition = ' if carrying or in room with %s' % self.condition[1]
-        elif c == 'prop!=':
-            condition = ' if prop %d != %d' % self.condition[1:]
+            condition = u''
+        elif c == u'%':
+            condition = u' %d%% of the time' % self.condition[1]
+        elif c == u'not_dwarf':
+            condition = u' if not a dwarf'
+        elif c == u'carrying':
+            condition = u' if carrying %s' % self.condition[1]
+        elif c == u'carrying_or_in_room_with':
+            condition = u' if carrying or in room with %s' % self.condition[1]
+        elif c == u'prop!=':
+            condition = u' if prop %d != %d' % self.condition[1:]
 
         if isinstance(self.action, Room):
-            action = 'moves to %r' % (self.action.short_description
+            action = u'moves to %r' % (self.action.short_description
                 or self.action.long_description[:20]).strip()
         elif isinstance(self.action, Message):
-            action = 'prints %r' % self.action.text
+            action = u'prints %r' % self.action.text
         else:
-            action = 'special %d' % self.action
+            action = u'special %d' % self.action
 
-        return '<{}{} {}>'.format('|'.join(verblist), condition, action)
+        return u'<{}{} {}>'.format(u'|'.join(verblist), condition, action)
 
 class Room(object):
-    """A location in the game."""
+    u"""A location in the game."""
 
-    long_description = ''
-    short_description = ''
+    long_description = u''
+    short_description = u''
     times_described = 0
     visited = False
 
@@ -57,7 +57,7 @@ class Room(object):
         self.travel_table = []
 
     def __repr__(self):
-        return '<room {} at {}>'.format(self.n, hex(id(self)))
+        return u'<room {} at {}>'.format(self.n, hex(id(self)))
 
     @property
     def is_forced(self):
@@ -80,7 +80,7 @@ class Room(object):
         return not self.is_light
 
 class Word(object):
-    """A word that can be used as part of a command."""
+    u"""A word that can be used as part of a command."""
 
     text = None
     kind = None
@@ -90,23 +90,23 @@ class Word(object):
         self.synonyms = [ self ]
 
     def __repr__(self):
-        return '<Word {}>'.format(self.text)
+        return u'<Word {}>'.format(self.text)
 
     def __eq__(self, text):
         return any( word.text == text for word in self.synonyms )
 
     def add_synonym(self, other):
-        """Every word in a group of synonyms shares the same list."""
+        u"""Every word in a group of synonyms shares the same list."""
         self.synonyms.extend(other.synonyms)
         other.synonyms = self.synonyms
 
 class Object(object):
-    """An object in the game, like a grate, or a rod with a rusty star."""
+    u"""An object in the game, like a grate, or a rod with a rusty star."""
 
     def __init__(self):
         self.is_fixed = False
         self.is_treasure = False
-        self.inventory_message = ''
+        self.inventory_message = u''
         self.messages = {}
         self.names = []
         self.prop = 0
@@ -116,7 +116,7 @@ class Object(object):
         self.contents = None  # so the bottle can hold things
 
     def __repr__(self):
-        return '<Object %d %s %x>' % (self.n, '/'.join(self.names), id(self))
+        return u'<Object %d %s %x>' % (self.n, u'/'.join(self.names), id(self))
 
     def __hash__(self):
         return self.n
@@ -143,14 +143,14 @@ class Object(object):
         self.hide()
 
 class Message(object):
-    """A message for printing."""
-    text = ''
+    u"""A message for printing."""
+    text = u''
 
     def __str__(self):
         return self.text
 
 class Hint(object):
-    """A hint offered if the player loiters in one area too long."""
+    u"""A hint offered if the player loiters in one area too long."""
 
     turns_needed = 0
     turn_counter = 0
@@ -180,7 +180,7 @@ class Dwarf(object):
         room = move.action
         return (room.is_after_hall_of_mists
                 and not room.is_forced
-                and not move.condition == ('%', 100))
+                and not move.condition == (u'%', 100))
 
 class Pirate(Dwarf):
     is_dwarf = False

@@ -9,21 +9,21 @@ class DataTest(unittest.TestCase):
         load_advent_dat(self.data)
 
     def test_long_description(self):
-        self.assertEqual(self.data.rooms[4].long_description, """\
+        self.assertEqual(self.data.rooms[4].long_description, u"""\
 YOU ARE IN A VALLEY IN THE FOREST BESIDE A STREAM TUMBLING ALONG A
 ROCKY BED.
 """)
 
     def test_long_description_expands_tabs(self):
-        self.assertIn("ALMOST AS IF ALIVE.  A COLD WIND BLOWS",
+        self.assertIn(u"ALMOST AS IF ALIVE.  A COLD WIND BLOWS",
                       self.data.rooms[15].long_description)
 
     def test_short_description(self):
         self.assertEqual(self.data.rooms[4].short_description,
-                         "YOU'RE IN VALLEY.\n")
+                         u"YOU'RE IN VALLEY.\n")
 
     def test_object_message_expands_tabs(self):
-        self.assertEqual(self.data.objects[24].messages[5], """\
+        self.assertEqual(self.data.objects[24].messages[5], u"""\
 YOU'VE OVER-WATERED THE PLANT!  IT'S SHRIVELING UP!  IT'S, IT'S...
 """)
 
@@ -32,8 +32,8 @@ YOU'VE OVER-WATERED THE PLANT!  IT'S SHRIVELING UP!  IT'S, IT'S...
         self.assertEqual(hint.turns_needed, 4)
         self.assertEqual(hint.penalty, 2)
         self.assertEqual(hint.question.text,
-                         "ARE YOU TRYING TO GET INTO THE CAVE?\n")
-        self.assertEqual(hint.message.text, """\
+                         u"ARE YOU TRYING TO GET INTO THE CAVE?\n")
+        self.assertEqual(hint.message.text, u"""\
 THE GRATE IS VERY SOLID AND HAS A HARDENED STEEL LOCK.  YOU CANNOT
 ENTER WITHOUT A KEY, AND THERE ARE NO KEYS NEARBY.  I WOULD RECOMMEND
 LOOKING ELSEWHERE FOR THE KEYS.
@@ -53,16 +53,16 @@ class ReprTest(unittest.TestCase):
 
     def test_move_repr_look_good(self):
         m = self.assertMove
-        m(1, 0, '<road|west|upward moves to "YOU\'RE AT HILL IN ROAD.">')
-        m(108, 0, '<east|north|south|ne|se|sw|nw|upward|d 95% of the time'
-          ' prints \'YOU HAVE CRAWLED AROUND IN SOME LITTLE HOLES AND WOUND'
-          ' UP BACK IN THE\\nMAIN PASSAGE.\\n\'>')
-        m(61, 2, '<south if not a dwarf moves to \'YOU ARE IN A MAZE OF\'>')
-        m(15, 3, '<upward|pit|steps|dome|passage|east if carrying 50 moves'
-          ' to \'THE DOME IS UNCLIMBA\'>')
-        m(19, 6, '<sw if carrying or in room with 11 moves to '
-          '"YOU CAN\'T GET BY THE">')
-        m(17, 2, '<forward if prop 12 != 1 moves to "YOU DIDN\'T MAKE IT.">')
+        m(1, 0, u'<road|west|upward moves to "YOU\'RE AT HILL IN ROAD.">')
+        m(108, 0, u'<east|north|south|ne|se|sw|nw|upward|d 95% of the time'
+          u' prints \'YOU HAVE CRAWLED AROUND IN SOME LITTLE HOLES AND WOUND'
+          u' UP BACK IN THE\\nMAIN PASSAGE.\\n\'>')
+        m(61, 2, u'<south if not a dwarf moves to \'YOU ARE IN A MAZE OF\'>')
+        m(15, 3, u'<upward|pit|steps|dome|passage|east if carrying 50 moves'
+          u' to \'THE DOME IS UNCLIMBA\'>')
+        m(19, 6, u'<sw if carrying or in room with 11 moves to '
+          u'"YOU CAN\'T GET BY THE">')
+        m(17, 2, u'<forward if prop 12 != 1 moves to "YOU DIDN\'T MAKE IT.">')
 
     def test_move_repr_works_on_all_moves(self):
         for room in self.data.rooms.values():
@@ -70,15 +70,15 @@ class ReprTest(unittest.TestCase):
                 try:
                     repr(move)
                 except:  # pragma: no cover
-                    print(room, i)
+                    print room, i
                     raise
 
     def test_room_repr(self):
-        self.assertRegex(repr(self.data.rooms[64]), '<room 64 at .*>')
+        self.assertRegex(repr(self.data.rooms[64]), u'<room 64 at .*>')
 
     def test_object_repr(self):
-        self.assertRegex(repr(self.data.objects['chest']),
-                         r'<Object 55 chest/box/treasure .*>')
+        self.assertRegex(repr(self.data.objects[u'chest']),
+                         ur'<Object 55 chest/box/treasure .*>')
 
     def test_word_repr(self):
-        self.assertEqual(repr(self.data.vocabulary['eat']), '<Word eat>')
+        self.assertEqual(repr(self.data.vocabulary[u'eat']), u'<Word eat>')

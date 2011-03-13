@@ -1,15 +1,17 @@
-"""The Adventure game."""
+u"""The Adventure game."""
+from __future__ import with_statement
+from io import open
 
 def load_advent_dat(data):
     import os
     from .data import parse
 
-    datapath = os.path.join(os.path.dirname(__file__), 'advent.dat')
-    with open(datapath, 'r') as datafile:
+    datapath = os.path.join(os.path.dirname(__file__), u'advent.dat')
+    with open(datapath, u'r') as datafile:
         parse(data, datafile)
 
 def play(seed=None):
-    """Turn the Python prompt into an Adventure game.
+    u"""Turn the Python prompt into an Adventure game.
 
     With `seed` the caller can supply an integer to start the random
     number generator at a known state.  When `quiet` is true, no output
@@ -27,7 +29,7 @@ def play(seed=None):
     load_advent_dat(_game)
     install_words(_game)
     _game.start()
-    print(_game.output[:-1])
+    print _game.output[:-1]
 
 def resume(savefile, quiet=False):
     global _game
@@ -38,4 +40,4 @@ def resume(savefile, quiet=False):
     _game = Game.resume(savefile)
     install_words(_game)
     if not quiet:
-        print('GAME RESTORED\n')
+        print u'GAME RESTORED\n'

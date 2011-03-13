@@ -1,5 +1,6 @@
-"""Offer Adventure at a custom command prompt."""
+u"""Offer Adventure at a custom command prompt."""
 
+from __future__ import division
 import re
 from sys import stdout
 from time import sleep
@@ -19,7 +20,7 @@ load_advent_dat(game)
 game.start()
 baudout(game.output)
 while not game.is_finished:
-    line = input('> ')
-    words = re.findall(r'\w+', line)
+    line = raw_input(u'> ')
+    words = re.findall(ur'\w+', line)
     if words:
         baudout(game.do_command(words))
